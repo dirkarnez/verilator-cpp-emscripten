@@ -27,8 +27,7 @@ jobs:
           --rm \
           -v $(pwd):/work \
           --user $(id -u):$(id -g) \
-          verilator/verilator:latest --cc test.v && \
-          $(VERILATOR) --cc --exe --build -j 0 top.v sim_main.cpp
+          verilator/verilator:latest --cc --exe --build -j 0 top.v sim_main.cpp && \
           docker run \
           --rm \
           -v $(pwd):/src \
