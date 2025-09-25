@@ -23,6 +23,7 @@ jobs:
       
       - name: Build
         run: |
+          sudo chmod -R +x . && \
           docker run \
           --rm \
           -v $(pwd):/work \
