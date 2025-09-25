@@ -1,0 +1,71 @@
+name: cpp-cmake-mingw-prebuilt-release-actions-workflow
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      targetZip: verilator-cpp-${{ github.ref_name }}-emscripten.zip
+    steps:
+      - uses: actions/checkout@v4
+
+    # The branch, tag or SHA to checkout. When checking out the repository that
+    # triggered a workflow, this defaults to the reference or SHA for that event.
+    # Otherwise, uses the default branch.
+      - uses: actions/checkout@v4
+        with:
+          ref: 'main'
+          path: 'committing'
+      
+      - name: Build
+        run: |
+          docker run \
+          --rm \
+          -v $(pwd):/work \
+          --user $(id -u):$(id -g) \
+          verilator/verilator:latest --cc test.v && \
+          $(VERILATOR) --cc --exe --build -j 0 top.v sim_main.cpp
+          docker run \
+          --rm \
+          -v $(pwd):/src \
+          --user $(id -u):$(id -g) \
+          emscripten/emsdk \
+          emcc -lembind -o sim_main.js sim_main.cpp
+
+      - run: cp -f 'sim_main.js' 'committing'
+          
+      - run: cp -f 'sim_main.wasm' 'committing'
+
+      - run: cp -f 'Vtop' 'committing'
+          
+      - run: cp -f 'index.html' 'committing'
+
+      - uses: EndBug/add-and-commit@v9 # You can change this to use a specific version.
+        with:
+          cwd: 'committing'
+          # The arguments for the `git add` command (see the paragraph below for more info)
+          # Default: '.'
+          # add: '["fnmatch.js", "fnmatch.wasm", "index.html"]'
+          
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          path: |
+            Vtop
+            Vtop.h
+            sim_main.js
+            sim_main.wasm
+            index.html
+          filename: "${{ env.targetZip }}"
+
+      - name: Release prebuilt
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "${{ env.targetZip }}"
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
