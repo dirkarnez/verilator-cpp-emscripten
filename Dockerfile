@@ -12,4 +12,4 @@ RUN ./emsdk install latest && ./emsdk activate latest
 
 WORKDIR /work
 
-ENTRYPOINT [ "./build.sh" ]
+CMD [ "bash", "./build.sh" ]
