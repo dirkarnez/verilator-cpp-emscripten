@@ -20,7 +20,7 @@ jobs:
         with:
           ref: 'main'
           path: 'committing'
-      
+#  verilator/verilator:latest --cc --exe --build -j 0 top.v sim_main.cpp && \
       - name: Build
         run: |
           sudo chmod -R +x . && \
@@ -28,7 +28,7 @@ jobs:
           --rm \
           -v $(pwd):/work \
           --user $(id -u):$(id -g) \
-          verilator/verilator:latest --cc --exe --build -j 0 top.v sim_main.cpp && \
+          verilator/verilator:latest --cc top.v && \
           docker run \
           --rm \
           -v $(pwd):/src \
@@ -40,7 +40,7 @@ jobs:
           
       - run: cp -f 'sim_main.wasm' 'committing'
 
-      - run: cp -f 'Vtop' 'committing'
+    # - run: cp -f 'Vtop' 'committing'
           
       - run: cp -f 'index.html' 'committing'
 
@@ -56,7 +56,6 @@ jobs:
         with:
           type: 'zip'
           path: |
-            Vtop
             Vtop.h
             sim_main.js
             sim_main.wasm
