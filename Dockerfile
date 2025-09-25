@@ -1,4 +1,4 @@
-FROM verilator/verilator:latest
+FROM ubuntu:latest
 
 RUN apt-get update
 RUN apt-get install -y git curl python3 xz-utils bzip2 libatomic1
