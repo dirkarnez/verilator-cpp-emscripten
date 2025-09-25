@@ -21,21 +21,26 @@ jobs:
           ref: 'main'
           path: 'committing'
 #  verilator/verilator:latest --cc --exe --build -j 0 top.v sim_main.cpp && \
-      - name: Build
+      - name: set permission and run
         run: |
-          sudo chmod -R +x . && \
-          docker run \
-          --rm \
-          -v $(pwd):/work \
-          --user $(id -u):$(id -g) \
-          verilator/verilator:latest --cc top.v && \
-          docker run \
-          --rm \
-          -v $(pwd):/src \
-          --user $(id -u):$(id -g) \
-          emscripten/emsdk \
-          emcc -lembind -o sim_main.js sim_main.cpp && \
-          ls -R
+          sudo chmod -R 777 . && \
+          ls && \
+          docker compose up --build && docker compose down
+      # - name: Build
+      #   run: |
+      #     sudo chmod -R +x . && \
+      #     docker run \
+      #     --rm \
+      #     -v $(pwd):/work \
+      #     --user $(id -u):$(id -g) \
+      #     verilator/verilator:latest --cc top.v && \
+      #     docker run \
+      #     --rm \
+      #     -v $(pwd):/src \
+      #     --user $(id -u):$(id -g) \
+      #     emscripten/emsdk \
+      #     emcc -lembind -o sim_main.js sim_main.cpp && \
+      #     ls -R
 
       - run: cp -f 'sim_main.js' 'committing'
           
