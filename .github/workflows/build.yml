@@ -34,7 +34,8 @@ jobs:
           -v $(pwd):/src \
           --user $(id -u):$(id -g) \
           emscripten/emsdk \
-          emcc -lembind -o sim_main.js sim_main.cpp
+          emcc -lembind -o sim_main.js sim_main.cpp && \
+          ls -R
 
       - run: cp -f 'sim_main.js' 'committing'
           
